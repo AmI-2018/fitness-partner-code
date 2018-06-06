@@ -1,22 +1,34 @@
 import socket
 import threading
+import simplejson
 
-outString = ""
-inString = ""
+outMessage = {}
+inMessage = {}
 
 
 def client_send(sock):
-    global outString
+    global outMessage
     while True:
-        outString = input()
-        sock.send(outString.encode())
+        command = input()
+        outMessage["command"] = command
+        data = simplejson.dumps(outMessage).encode()
+        sock.send(data)
 
 
 def client_receive(sock):
-    global inString
+    global inMessage
     while True:
-        inString = sock.recv(1024).decode()
-        print(inString)
+        inMessage = simplejson.loads(sock.recv(1024).decode())
+
+        if inMessage["command"] == "Quit client":
+            outMessage["command"] = "Quit client"
+            data = simplejson.dumps(outMessage).encode()
+            sock.send(data)
+
+        elif inMessage["command"] == "Initialize":
+            print("Initialized with: ", inMessage["data"])
+
+        print(inMessage["command"])
 
 
 host = "127.0.0.1"

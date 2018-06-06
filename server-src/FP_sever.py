@@ -10,6 +10,7 @@ from rgbxy import GamutA, GamutB, GamutC
 import rest
 import heapq
 import numpy
+import simplejson
 
 
 # HEART BEAT RATE DETECTION MODULE
@@ -19,7 +20,6 @@ def detect_hbr_data_demo():
     global queue_lock, heart_beat_queue
     print("Start heart beat rate detection demo module!")
     heart_beat = 130
-
     while events.get_value("Lights_on"):
         queue_lock.acquire()
         if len(heart_beat_queue) >= 60:
@@ -124,7 +124,7 @@ class MusicModule(threading.Thread):
 
 # Play the music.
 def music_play():
-    global outString
+    global outMessage
     pygame.mixer.init()
 
     # TODO: get implementation of select new song.
@@ -253,12 +253,12 @@ def change_light_color_by_hbr():
 
 # Client send message
 def client_send(sock):
-    global outString
+    global outMessage
     print("Start send module!")
     while True:
         send_event.wait()
-        if inString == "5":
-            sock.send(inString.encode())
+        if inMessage == "5":
+            sock.send(inMessage.encode())
             break
         print("Send message:", outString)
         sock.send(outString.encode())
@@ -268,7 +268,7 @@ def client_send(sock):
 
 # Client receive message
 def client_receive(sock):
-    global inString
+    global inMessage
     global command_event, music_start_event, send_event
     print("Start receive module!")
     while True:
@@ -381,8 +381,8 @@ if __name__ == "__main__":
         conn, addr = s.accept()
 
         # Initialize input and output cache
-        inString = ""
-        outString = ""
+        inMessage = ""
+        outMessage = ""
         print("Connect with " + addr[0] + ":" + str(addr[1]))
 
         # Set and start main threads

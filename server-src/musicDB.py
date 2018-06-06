@@ -64,7 +64,6 @@ def scan_music(location):
     # connect to data base
     conn = connect_to_db()
 
-
     # prepare a cursor object using cursor() method
     cursor = conn.cursor()
 
@@ -111,10 +110,27 @@ def scan_music(location):
     cursor.close()
 
 
+def truncate_music_db(location):
+    # connect to data base
+    conn = connect_to_db()
+
+    # prepare a cursor object using cursor() method
+    cursor = conn.cursor()
+
+    truncate_table = "TRUNCATE TABLE {table}"
+
+    for root, dirs, files in os.walk(location):
+        for name in dirs:
+            table = name
+            cursor.execute(truncate_table.format(table=table))
+            print("Table %s cleared.", name)
+
+
 if __name__ == "__main__":
 
     scan_music("C:\AMI\music")
 
     a, b = select_music(175)
-
     print(a, b)
+
+    # truncate_music_db("C:\AMI\music")

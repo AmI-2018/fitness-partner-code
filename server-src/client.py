@@ -1,36 +1,78 @@
 import socket
 import threading
+import simplejson
 
-outString = ""
-inString = ""
+outMessage = {}
+inMessage = {}
 running = True
 
 
 def client_send(sock):
-    global outString, running
+    global outMessage, running
     print("Start send module!")
-    while True:
-        data = input()
-        if data == "7":
-            data = "Start sport music"
-        elif data == "0":
-            data = "Start warm up music"
-        outString = data.encode()
-        sock.send(outString)
-        if data == "5":
+    while running:
+        command = input()
+
+        if command == "0":
+            outMessage["command"] = "Start warm up music"
+
+        elif command == "1":
+            outMessage["command"] = "Change music"
+
+        elif command == "2":
+            outMessage["command"] = "Pause"
+
+        elif command == "3":
+            outMessage["command"] = "unPause"
+
+        elif command == "4":
+            outMessage["command"] = "Stop music module"
+
+        elif command == "5":
+            outMessage["command"] = "Quit client"
+
+        elif command == "6":
+            outMessage["command"] = "Start light module"
+
+        elif command == "7":
+            outMessage["command"] = "Start sport music"
+
+        elif command == "initial":
+            outMessage["command"] = "Initialize"
+            outMessage["data"] = {"isInitialized": True,
+                                  "Age": 23,
+                                  "Rest_time": 60,
+                                  "fitbit_user_id": "6NQLSZ",
+                                  "default_color": (255, 255, 255),
+                                  "anaerobic_color": (153, 204, 51),
+                                  "maximum_color": (255, 68, 0)
+                                  }
+
+        else:
+            outMessage["command"] = command
+
+        data = simplejson.dumps(outMessage).encode()
+
+        sock.send(data)
+        if command == "5":
             break
+
     print("Send module stopped!")
 
 
 def client_receive(sock):
     print("Start receive module!")
-    global inString, running
+    global inMessage, running
+
     while running:
-        inString = sock.recv(1024).decode()
-        if inString == "5":
+        inMessage = simplejson.loads(sock.recv(1024).decode())
+
+        if inMessage["command"] == "Quit client":
             break
-        print(inString)
+
+        print(inMessage["command"])
     sock.close()
+
     print("Receive module stopped!")
 
 
