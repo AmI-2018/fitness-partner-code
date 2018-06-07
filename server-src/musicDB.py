@@ -109,6 +109,8 @@ def scan_music(location):
     # disconnect from server
     cursor.close()
 
+    return True
+
 
 def truncate_music_db(location):
     # connect to data base

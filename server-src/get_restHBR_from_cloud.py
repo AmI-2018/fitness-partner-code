@@ -33,6 +33,7 @@ def get_averange_hbt_from_server(client_id, client_secret, days):
             'activities/heart', base_date=generate_date(day), detail_level='15min')
 
         values = fit_stats_hr['activities-heart'][0]['value']
+
         if 'restingHeartRate' in values:
             rest_hbr_list.append(values['restingHeartRate'])
             print("Date: %s, Rest heartbeat rate: %d" %

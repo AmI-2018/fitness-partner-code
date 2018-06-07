@@ -260,8 +260,8 @@ def client_send(sock):
         if inMessage == "5":
             sock.send(inMessage.encode())
             break
-        print("Send message:", outString)
-        sock.send(outString.encode())
+        print("Send message:", outMessage)
+        sock.send(outMessage.encode())
         send_event.clear()
     print("Send module stopped!")
 
@@ -272,15 +272,15 @@ def client_receive(sock):
     global command_event, music_start_event, send_event
     print("Start receive module!")
     while True:
-        inString = sock.recv(1024).decode()
-        if inString == "Start warm up music":
+        inMessage = sock.recv(1024).decode()
+        if inMessage == "Start warm up music":
             music = MusicModule("Music model")
             detection = MusicPlaying("Music playing")
             events.set_value("Warming_up", True)
 
             music.start()
             detection.start()
-        elif inString == "Start sport music":
+        elif inMessage == "Start sport music":
             music = MusicModule("Music model")
             detection = MusicPlaying("Music playing")
             events.set_value("Warming_up", False)
@@ -291,7 +291,7 @@ def client_receive(sock):
 
             music.start()
             detection.start()
-        elif inString == "1":
+        elif inMessage == "1":
             events.set_value("Music_player_state", "CHANGE")
             command_event.set()
             print("Changing song......")
@@ -301,29 +301,29 @@ def client_receive(sock):
             command_event.set()
             print("Music paused......")
 
-        elif inString == "3":
+        elif inMessage == "3":
             events.set_value("Music_player_state", "PLAYING")
             command_event.set()
             print("Music continued......")
 
-        elif inString == "4":
+        elif inMessage == "4":
             events.set_value("Music_player_state", "QUIT")
             command_event.set()
             print("Music STOPPED.")
 
-        elif inString == "5":
+        elif inMessage == "5":
             events.set_value("Music_player_state", "QUIT")
             events.set_value("Lights_on", False)
             command_event.set()
             print("Music STOPPED.")
             send_event.set()
             break
-        elif inString == "6":
-            thread_demo = threading.Thread(target=detect_hbr_data_demo)
+        elif inMessage == "6":
+            thread_detect_hbr_data = threading.Thread(target=detect_hbr_data_demo)
             thread_light = threading.Thread(target=change_light_color_by_hbr)
             events.set_value("Lights_on", True)
 
-            thread_demo.start()
+            thread_detect_hbr_data.start()
             thread_light.start()
     print("Receive module stopped!")
 
