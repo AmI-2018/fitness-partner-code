@@ -1,4 +1,4 @@
-def _init():
+def init():
     global _global_dict
     _global_dict = {}
 
@@ -16,6 +16,6 @@ def get_value(name, def_value=None):
 
 def to_string():
     if _global_dict is None:
-        print("Events are empty.")
+        return None
     else:
-        print(str(_global_dict))
+        return str(_global_dict)

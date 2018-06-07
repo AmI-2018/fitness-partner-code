@@ -11,7 +11,7 @@ import rest
 import heapq
 import numpy
 import simplejson
-
+import configparser
 
 # HEART BEAT RATE DETECTION MODULE
 
@@ -127,7 +127,6 @@ def music_play():
     global outMessage
     pygame.mixer.init()
 
-    # TODO: get implementation of select new song.
     if events.get_value("Warming_up"):
         music_location, music_name = musicDB.select_music(random.randint(90, 109))
         events.set_value("Music_location", str(music_location))
@@ -139,7 +138,7 @@ def music_play():
 
     # events.to_string()
 
-    outString = "Playing: " + music_name
+    outMessage = "Playing: " + music_name
     send_event.set()
 
     pygame.mixer.music.load(music_location)
@@ -189,16 +188,14 @@ def range_multiply(color, percent):
 
 # Send http requests to change lights color
 def change_light_color(rgb):
-    global all_the_lights, lights_url
     for light in all_the_lights:
         url_to_call = lights_url + light + '/state'
-        body = '{"on":true, "transitiontime": 5,"xy":[%f, %f]}' % converter.rgb_to_xy(rgb[0], rgb[1], rgb[2])
+        body = '{"on":true, "transitiontime": 10,"xy":[%f, %f]}' % converter.rgb_to_xy(rgb[0], rgb[1], rgb[2])
         rest.send('PUT', url_to_call, body, {'Content-Type': 'application/json'})
 
 
 # Turn off lights
 def turn_off_light():
-    global all_the_lights, lights_url
     time.sleep(1)
     for light in all_the_lights:
         url_to_call = lights_url + light + '/state'
@@ -208,11 +205,7 @@ def turn_off_light():
 
 # Change color lights color by real time heart beat rate
 def change_light_color_by_hbr():
-    global queue_lock, heart_beat_queue, \
-        aerobic_start, anaerobic_start, maximum_heart_beat, \
-        aerobic_color_range, anaerobic_color_range, \
-        aerobic_range, anaerobic_range, \
-        default_color, anaerobic_color, maximum_color
+    global queue_lock, heart_beat_queue
 
     print("Light module start!")
     while events.get_value("Lights_on"):
@@ -251,36 +244,61 @@ def change_light_color_by_hbr():
 # NETWORK MODEL
 
 
-# Client send message
-def client_send(sock):
-    global outMessage
-    print("Start send module!")
+# Server send message
+def server_send(sock, address):
+    global outMessage, send_event, inMessage
+
+    print("\033[33mStart send module!\033[0m")
+
     while True:
         send_event.wait()
-        if inMessage == "5":
-            sock.send(inMessage.encode())
+
+        if inMessage["command"] == "Quit client":
+            sock.send(simplejson.dumps(inMessage).encode())
             break
-        print("Send message:", outMessage)
-        sock.send(outMessage.encode())
+
+        data = simplejson.dumps(outMessage).encode()
+        sock.send(data)
+
         send_event.clear()
-    print("Send module stopped!")
+
+    send_event.clear()
+
+    print("\033[31mSend module stopped!\033[0m")
+    print("\033[31mDisconnected with:\033[0m", address[0] + ":" + str(address[1]))
 
 
-# Client receive message
-def client_receive(sock):
-    global inMessage
+# Server receive message
+def server_receive(sock):
+    global outMessage, send_event, inMessage
     global command_event, music_start_event, send_event
-    print("Start receive module!")
+
+    print("\033[33mStart receive module!\033[0m")
+
     while True:
-        inMessage = sock.recv(1024).decode()
-        if inMessage == "Start warm up music":
+        inMessage = simplejson.loads(sock.recv(1024).decode())
+
+        print("\033[34mRECEIVE MESSAGE:\033[0m", inMessage["command"])
+
+        if inMessage["command"] == "Quit client":
+            events.set_value("Music_player_state", "QUIT")
+            events.set_value("Lights_on", False)
+            command_event.set()
+            print("Music STOPPED.")
+
+            outMessage["command"] = "Quit client"
+            send_event.set()
+            break
+
+        elif inMessage["command"] == "Start warm up music":
             music = MusicModule("Music model")
             detection = MusicPlaying("Music playing")
             events.set_value("Warming_up", True)
 
             music.start()
             detection.start()
-        elif inMessage == "Start sport music":
+
+        elif inMessage["command"] == "Start sport music":
             music = MusicModule("Music model")
             detection = MusicPlaying("Music playing")
             events.set_value("Warming_up", False)
@@ -291,103 +309,148 @@ def client_receive(sock):
 
             music.start()
             detection.start()
-        elif inMessage == "1":
+
+        elif inMessage["command"] == "1":
             events.set_value("Music_player_state", "CHANGE")
             command_event.set()
             print("Changing song......")
 
-        elif inString == "2":
+        elif inMessage["command"] == "2":
             events.set_value("Music_player_state", "PAUSE")
             command_event.set()
             print("Music paused......")
 
-        elif inMessage == "3":
+        elif inMessage["command"] == "3":
             events.set_value("Music_player_state", "PLAYING")
             command_event.set()
             print("Music continued......")
 
-        elif inMessage == "4":
+        elif inMessage["command"] == "4":
             events.set_value("Music_player_state", "QUIT")
             command_event.set()
             print("Music STOPPED.")
 
-        elif inMessage == "5":
-            events.set_value("Music_player_state", "QUIT")
-            events.set_value("Lights_on", False)
-            command_event.set()
-            print("Music STOPPED.")
-            send_event.set()
-            break
-        elif inMessage == "6":
+        elif inMessage["command"] == "6":
             thread_detect_hbr_data = threading.Thread(target=detect_hbr_data_demo)
             thread_light = threading.Thread(target=change_light_color_by_hbr)
             events.set_value("Lights_on", True)
 
             thread_detect_hbr_data.start()
             thread_light.start()
-    print("Receive module stopped!")
+
+    print("\033[31mReceive module stopped!\033[0m")
+
+
+def initialize_server():
+    global converter, lights_url, all_the_lights, \
+           host, port, is_initialized
+    # Read configurations
+    config = configparser.ConfigParser()
+    config.read('config.ini')
+
+    # Initialize Hue Bridge information and RGB_to_XY converter
+    converter = Converter(config['LIGHT BRIDGE']['converter'])
+
+    base_url = config['LIGHT BRIDGE']['base_url']
+    username = config['LIGHT BRIDGE']['username']
+
+    lights_url = base_url + '/api/' + username + '/lights/'
+    all_the_lights = rest.send(url=lights_url)
+
+    # Initialize Server information
+    host = config['SERVER']['host']
+    port = int(config['SERVER']['port'])
+    is_initialized = eval(config['SERVER']['is_initialized'])
+
+
+def initialize_sport_settings():
+    global warm_up_time, rest_time, \
+        default_color, anaerobic_color, maximum_color, aerobic_color_range, anaerobic_color_range, \
+        aerobic_start, anaerobic_start, maximum_heart_beat, aerobic_range, anaerobic_range
+
+    # Read configurations
+    config = configparser.ConfigParser()
+    config.read('config.ini')
+
+    # Initialize sport information
+    warm_up_time = int(config['SPORT INFO']['warm_up_time'])
+    rest_time = int(config['SPORT INFO']['rest_time'])
+
+    # Initialize light color terminal and range information
+    default_color = eval(config['LIGHT COLOR']['default_color'])
+    anaerobic_color = eval(config['LIGHT COLOR']['anaerobic_color'])
+    maximum_color = eval(config['LIGHT COLOR']['maximum_color'])
+
+    aerobic_color_range = eval(config['LIGHT COLOR']['aerobic_color_range'])
+    anaerobic_color_range = eval(config['LIGHT COLOR']['anaerobic_color_range'])
+
+    # Initialize sport type terminal and range information
+    aerobic_start = int(config['BODY INFO']['aerobic_start'])
+    anaerobic_start = int(config['BODY INFO']['anaerobic_start'])
+    maximum_heart_beat = int(config['BODY INFO']['maximum_heart_beat'])
+
+    aerobic_range = int(config['BODY INFO']['aerobic_range'])
+    anaerobic_range = int(config['BODY INFO']['anaerobic_range'])
 
 
 if __name__ == "__main__":
+
     # Initialize Global events
-    events._init()
+    events.init()
+    initialize_server()
+
+    print("\033[36mServer initialize state:\033[0m", is_initialized)
+
+    # If server is initialized, load the saved information
+    if is_initialized:
+        initialize_sport_settings()
+        print("\033[36mSport settings loaded.\033[0m")
 
     # Initialize hear beat queue and lock for it
     queue_lock = threading.Lock()
     heart_beat_queue = []
 
-    # Initialize light color terminal and range information
-    default_color = (255, 255, 255)
-    anaerobic_color = (153, 204, 51)
-    maximum_color = (255, 68, 0)
-
-    aerobic_color_range = range_minus(default_color, anaerobic_color)
-    anaerobic_color_range = range_minus(anaerobic_color, maximum_color)
-
-    # Initialize sport type terminal and range information
-    aerobic_start = 114
-    anaerobic_start = 160
-    maximum_heart_beat = 191
-
-    aerobic_range = anaerobic_start - aerobic_start
-    anaerobic_range = maximum_heart_beat - anaerobic_start
+    # # Initialize light color terminal and range information
+    # default_color = (255, 255, 255)
+    # anaerobic_color = (153, 204, 51)
+    # maximum_color = (255, 68, 0)
+    #
+    # aerobic_color_range = range_minus(default_color, anaerobic_color)
+    # anaerobic_color_range = range_minus(anaerobic_color, maximum_color)
+    #
+    # # Initialize sport type terminal and range information
+    # aerobic_start = 114
+    # anaerobic_start = 160
+    # maximum_heart_beat = 191
+    #
+    # aerobic_range = anaerobic_start - aerobic_start
+    # anaerobic_range = maximum_heart_beat - anaerobic_start
 
     # Initialize Events
     command_event = threading.Event()
     music_start_event = threading.Event()
     send_event = threading.Event()
 
-    # Initialize Hue Bridge information and RGB_to_XY converter
-    converter = Converter(GamutA)
-
-    base_url = 'http://localhost:8000'
-    username = 'newdeveloper'
-    lights_url = base_url + '/api/' + username + '/lights/'
-    all_the_lights = rest.send(url=lights_url)
-
-    # Initialize Server information
-    host = "127.0.0.1"
-    port = 8888
-
     # Initialize Socket and begin to listen
     s = socket.socket()
-    print("Socket created")
+    print("\033[33mSocket created\033[0m")
+
     s.bind((host, port))
     s.listen(5)
-    print("Socket new listening")
+    print("\033[33mSocket new listening\033[0m")
 
     # Waiting for client connection......
     while True:
         conn, addr = s.accept()
 
         # Initialize input and output cache
-        inMessage = ""
-        outMessage = ""
-        print("Connect with " + addr[0] + ":" + str(addr[1]))
+        inMessage = {}
+        outMessage = {}
+        print("\033[34mConnect with: \033[0m" + addr[0] + ":" + str(addr[1]))
 
         # Set and start main threads
-        thread_send = threading.Thread(target=client_send, args=(conn,))
-        thread_receive = threading.Thread(target=client_receive, args=(conn,))
+        thread_send = threading.Thread(target=server_send, args=(conn, addr))
+        thread_receive = threading.Thread(target=server_receive, args=(conn,))
 
         thread_send.start()
         thread_receive.start()

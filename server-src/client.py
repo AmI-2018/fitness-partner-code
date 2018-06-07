@@ -13,64 +13,73 @@ def client_send(sock):
     while running:
         command = input()
 
-        if command == "0":
+        if command == "1":
             outMessage["command"] = "Start warm up music"
 
-        elif command == "1":
+        elif command == "2":
             outMessage["command"] = "Start sport music"
 
-        elif command == "2":
+        elif command == "3":
             outMessage["command"] = "Change music"
 
-        elif command == "3":
+        elif command == "4":
             outMessage["command"] = "Pause"
 
-        elif command == "4":
+        elif command == "5":
             outMessage["command"] = "unPause"
 
-        elif command == "5":
+        elif command == "6":
             outMessage["command"] = "Stop music module"
 
-        elif command == "6":
+        elif command == "7":
             outMessage["command"] = "Start light module"
 
-        elif command == "7":
+        elif command == "8":
             outMessage["command"] = "Stop light module"
 
-        elif command == "8":
+        elif command == "9":
             outMessage["command"] = "Start heartbeat detection"
 
-        elif command == "9":
+        elif command == "10":
             outMessage["command"] = "Stop heartbeat detection"
 
-        elif command == "initial":
+        elif command == "11":
             outMessage["command"] = "Initialize"
             outMessage["data"] = {"age": 23,
                                   "rest_time": 60,
-                                  "warm_ip_time": 15,
+                                  "warm_up_time": 15,
+                                  "rest_heartbeat_rate": 70,
                                   "fitbit_user_secret": "90dca659ed79208397b8cb3f3682f4f4",
                                   "fitbit_user_id": "22CTVH",
                                   "default_color": (255, 255, 255),
                                   "anaerobic_color": (153, 204, 51),
                                   "maximum_color": (255, 68, 0)
                                   }
-        elif command == "isInitial":
+        elif command == "12":
             outMessage["command"] = "isInitialized"
 
-        elif command == "getRHBR":
+        elif command == "13":
             outMessage["command"] = "Get rest heartbeat rate"
+
+        elif command == "14":
+            outMessage["command"] = "Set demo module"
+
+        elif command == "15":
+            outMessage["command"] = "Reset server"
+
+        elif command == "16":
+            outMessage["command"] = "Update music database"
+
+        elif command == "17":
+            outMessage["command"] = "Update light color"
+
+            outMessage["data"] = {"default_color": (255, 255, 0),
+                                  "anaerobic_color": (153, 204, 0),
+                                  "maximum_color": (255, 0, 0)
+                                  }
 
         elif command == "quit":
             outMessage["command"] = "Quit client"
-
-        elif command == "setDemo":
-            outMessage["command"] = "Set demo module"
-
-        elif command == "reset":
-            outMessage["command"] = "Reset server"
-
-        elif command == "updateMusicDB":
-            outMessage["command"] = "Update music database"
 
         else:
             outMessage["command"] = command
@@ -95,7 +104,8 @@ def client_receive(sock):
             break
 
         print(str(inMessage["command"]))
-
+        if "data" in inMessage:
+            print("Data is:", inMessage["data"])
     sock.close()
 
     print("Receive module stopped!")

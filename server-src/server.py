@@ -11,10 +11,11 @@ send_event = threading.Event()
 run_lock = threading.Lock()
 
 hbr_running = True
+music_running = True
 
 
-def client_send(sock, address):
-    global outMessage, send_event
+def server_send(sock, address):
+    global outMessage, send_event, inMessage
 
     print("\033[33mStart send module!\033[0m")
 
@@ -37,8 +38,8 @@ def client_send(sock, address):
     print("\033[31mDisconnected with:\033[0m", address[0] + ":" + str(address[1]))
 
 
-def client_receive(sock):
-    global inMessage, outMessage, send_event, hbr_running, run_lock
+def server_receive(sock):
+    global inMessage, outMessage, send_event, hbr_running, run_lock, music_running
 
     print("\033[33mStart receive module!\033[0m")
 
@@ -63,7 +64,11 @@ def client_receive(sock):
                 outMessage["command"] = "Server is initialized"
 
                 # 必要的启动数据，保存在字典 outMessage["data"] 中
-                outMessage["data"] = {"warm_up_time": 15}
+                outMessage["data"] = {"warm_up_time": 15,
+                                      "default_color": (255, 255, 255),
+                                      "anaerobic_color": (153, 204, 51),
+                                      "maximum_color": (255, 68, 0)
+                                      }
 
             # 如果没有初始化过会发送给客户端 "Server isn't initialized"
             else:
@@ -78,7 +83,11 @@ def client_receive(sock):
 
             # 打印客户端发送的初始化数据
             for (key, value) in inMessage["data"].items():
-                print(key, ":", value)
+                print(key, ":", value, "-", type(value))
+
+                # if key == "default_color":
+                #     for i in value:
+                #         print(i, type(i))
 
             # 会向客户端发送字符串 "Initialized successfully"
             outMessage["command"] = "Initialized successfully"
@@ -98,15 +107,36 @@ def client_receive(sock):
 
         # 5.客户端向服务器请求开始热身音乐
         elif inMessage["command"] == "Start warm up music":
+            global music_running
+            music_running = True
+
+            thread_hbr_demo = threading.Thread(target=send_music_name_demo)
+            thread_hbr_demo.start()
+
             print("\033[36mEXECUTED COMMAND:\033[0m", inMessage["command"])
 
         # 6.客户端向服务器请求开始健身音乐
         elif inMessage["command"] == "Start sport music":
+            music_running = True
+
+            thread_hbr_demo = threading.Thread(target=send_music_name_demo)
+            thread_hbr_demo.start()
+
             print("\033[36mEXECUTED COMMAND:\033[0m", inMessage["command"])
 
         # 7.客户端向服务器请求随机更换音乐
         elif inMessage["command"] == "Change music":
             print("\033[36mEXECUTED COMMAND:\033[0m", inMessage["command"])
+
+            playlist = ("Crazy All My Life",
+                        "Love Me Again",
+                        "Celebrate",
+                        "Wrecking Ball")
+
+            outMessage["command"] = "Music name"
+            outMessage["data"] = random.choice(playlist)
+            send_event.set()
+            print("\033[36mSEND MESSAGE:\033[0m", outMessage["command"], outMessage["data"])
 
         # 8.客户端向服务器请求暂停音乐
         elif inMessage["command"] == "Pause":
@@ -118,6 +148,13 @@ def client_receive(sock):
 
         # 10.客户端向服务器请求停止音乐
         elif inMessage["command"] == "Stop music module":
+            music_running = False
+
+            # 音乐停止后向客户端发送音乐停止命令。
+            outMessage["command"] = "Music stopped"
+            send_event.set()
+            print("\033[36mSEND MESSAGE:\033[0m", outMessage["command"])
+
             print("\033[36mEXECUTED COMMAND:\033[0m", inMessage["command"])
 
         # 11.客户端向服务器请求打开灯光
@@ -157,7 +194,20 @@ def client_receive(sock):
         elif inMessage["command"] == "Update music database":
 
             # 服务器回复更新成功
-            outMessage["command"] = "Update successfully"
+            outMessage["command"] = "Update MDB successfully"
+            send_event.set()
+
+            print("\033[36mSEND MESSAGE:\033[0m", outMessage["command"])
+
+        # 18.客户端向服务器更新灯光颜色
+        elif inMessage["command"] == "Update light color":
+
+            # 打印客户端发送的灯光颜色数据
+            for (key, value) in inMessage["data"].items():
+                print(key, ":", value)
+
+            # 服务器回复更新成功
+            outMessage["command"] = "Update color successfully"
             send_event.set()
 
             print("\033[36mSEND MESSAGE:\033[0m", outMessage["command"])
@@ -195,23 +245,41 @@ def heart_beat_demo():
             time.sleep(1)
 
 
+def send_music_name_demo():
+    global music_running
+
+    playlist = ("Even Heaven",
+                "Separation",
+                "Shangri-La",
+                "Wake Me Up")
+
+    while True:
+        if not music_running:
+            break
+        outMessage["command"] = "Music name"
+        outMessage["data"] = random.choice(playlist)
+        send_event.set()
+        print("\033[36mSEND MESSAGE:\033[0m", outMessage["command"], outMessage["data"])
+        time.sleep(5)
+
+
 if __name__ == "__main__":
     host = "127.0.0.1"
     port = 8888
 
     s = socket.socket()
     print("\033[33mSocket created\033[0m")
+
     s.bind((host, port))
     s.listen(5)
-
     print("\033[33mSocket new listening\033[0m")
 
     while True:
         conn, addr = s.accept()
         print("\033[34mConnect with: \033[0m" + addr[0] + ":" + str(addr[1]))
 
-        thread_send = threading.Thread(target=client_send, args=(conn, addr))
-        thread_receive = threading.Thread(target=client_receive, args=(conn,))
+        thread_send = threading.Thread(target=server_send, args=(conn, addr))
+        thread_receive = threading.Thread(target=server_receive, args=(conn,))
 
         thread_send.start()
         thread_receive.start()
