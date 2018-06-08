@@ -2,6 +2,7 @@ import fitbit
 import datetime
 import gather_keys_oauth2 as oauth2
 import numpy
+import threading
 
 
 # Generate formula time string.
@@ -14,7 +15,7 @@ def get_averange_hbt_from_server(client_id, client_secret, days):
     # If the input days are wrong return -1.
     if days < 1 and isinstance(days, int):
         print("Wrong input days.")
-        return -1
+        return 0
 
     rest_hbr_list = []
 
@@ -45,11 +46,14 @@ def get_averange_hbt_from_server(client_id, client_secret, days):
         print("Got averange HBR data from fitbit server: ", result)
         return result
     else:
-        return -1
+        return 0
 
 
 if __name__ == '__main__':
     CLIENT_ID = '22CTVH'
     CLIENT_SECRET = '90dca659ed79208397b8cb3f3682f4f4'
 
-    print(get_averange_hbt_from_server(CLIENT_ID, CLIENT_SECRET, 7))
+    # print(get_averange_hbt_from_server(CLIENT_ID, CLIENT_SECRET, 7))
+    thread_send = threading.Thread(target=get_averange_hbt_from_server, args=(CLIENT_ID, CLIENT_SECRET, 7))
+
+    thread_send.start()

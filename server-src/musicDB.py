@@ -125,7 +125,7 @@ def truncate_music_db(location):
         for name in dirs:
             table = name
             cursor.execute(truncate_table.format(table=table))
-            print("Table %s cleared.", name)
+            print("Table %s cleared." % name)
 
 
 if __name__ == "__main__":

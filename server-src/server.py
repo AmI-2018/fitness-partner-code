@@ -29,7 +29,6 @@ def server_send(sock, address):
 
         data = simplejson.dumps(outMessage).encode()
         sock.send(data)
-
         send_event.clear()
 
     send_event.clear()
@@ -177,7 +176,7 @@ def server_receive(sock):
             hbr_running = False
             print("\033[36mEXECUTED COMMAND:\033[0m", inMessage["command"])
 
-        # 15.客户端向服务器请求开启demo模式
+        # 15.客户端向服务器请求设置demo模式
         elif inMessage["command"] == "Set demo module":
             print("\033[36mEXECUTED COMMAND:\033[0m", inMessage["command"])
 

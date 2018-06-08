@@ -1,6 +1,9 @@
 def init():
     global _global_dict
     _global_dict = {}
+    set_value("Detect_on", False)
+    set_value("Lights_on", False)
+    set_value("Music player running", False)
 
 
 def set_value(name, value):

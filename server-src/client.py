@@ -48,9 +48,11 @@ def client_send(sock):
             outMessage["data"] = {"age": 23,
                                   "rest_time": 60,
                                   "warm_up_time": 15,
-                                  "rest_heartbeat_rate": 70,
-                                  "fitbit_user_secret": "90dca659ed79208397b8cb3f3682f4f4",
-                                  "fitbit_user_id": "22CTVH",
+                                  "rest_heartbeat_rate": 65,
+                                  # "fitbit_user_secret": "90dca659ed79208397b8cb3f3682f4f4",
+                                  # "fitbit_user_id": "22CTVH",
+                                  "fitbit_user_id": '',
+                                  "fitbit_user_secret": '',
                                   "default_color": (255, 255, 255),
                                   "anaerobic_color": (153, 204, 51),
                                   "maximum_color": (255, 68, 0)
@@ -103,16 +105,17 @@ def client_receive(sock):
         if inMessage["command"] == "Quit client":
             break
 
-        print(str(inMessage["command"]))
+        print("Command: ", str(inMessage["command"]))
         if "data" in inMessage:
             print("Data is:", inMessage["data"])
+
     sock.close()
 
     print("Receive module stopped!")
 
 
 if __name__ == "__main__":
-    ip = "127.0.0.1"
+    ip = "192.168.1.100"
     port = 8888
     sock = socket.socket()
     sock.connect((ip, port))
