@@ -115,7 +115,7 @@ def client_receive(sock):
 
 
 if __name__ == "__main__":
-    ip = "192.168.1.100"
+    ip = "127.0.0.1"
     port = 8888
     sock = socket.socket()
     sock.connect((ip, port))

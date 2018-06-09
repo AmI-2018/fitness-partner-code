@@ -71,12 +71,9 @@ def initialize_sport_settings(rest_heartbeat_rate):
     maximum_heart_beat = eval(config['BODY INFO']['maximum_heart_beat'])
     aerobic_start = eval(config['BODY INFO']['aerobic_start'])
 
-    # anaerobic_start = eval(config['BODY INFO']['anaerobic_start'])
     heart_beat_storage = maximum_heart_beat - rest_heartbeat_rate
     anaerobic_start = rest_heartbeat_rate + 0.8 * heart_beat_storage
 
-    # aerobic_range = eval(config['BODY INFO']['aerobic_range'])
-    # anaerobic_range = eval(config['BODY INFO']['anaerobic_range'])
     aerobic_range = anaerobic_start - aerobic_start
     anaerobic_range = maximum_heart_beat - anaerobic_start
 
@@ -92,14 +89,15 @@ def initialize_sport_settings(rest_heartbeat_rate):
 
 
 def detect_hbr_data():
-    global queue_lock, heart_beat_queue, demo_mode
+    global queue_lock, heart_beat_queue, demo_mode, rest_time
 
+    # Judge whether start the module by demo mode
     if demo_mode:
         print("\033[33mStart heart beat rate detection demo module!\033[0m")
         heart_beat = 130
         while events.get_value("Detect_on"):
             queue_lock.acquire()
-            if len(heart_beat_queue) >= 60:
+            if len(heart_beat_queue) >= rest_time:
                 heart_beat_queue.pop(0)
 
             if random.randint(0, 1):
@@ -123,6 +121,7 @@ def detect_hbr_data():
             time.sleep(1)
         print("\033[31mHeart beat rate detection demo module stopped!\033[0m")
 
+    # Start with real module
     # TODO: Implement heart beat sense module
     else:
         print("\033[33mStart heart beat rate detection module!\033[0m")
@@ -131,7 +130,7 @@ def detect_hbr_data():
 
 
 def get_highest_averange_hbr_data():
-    global queue_lock, heart_beat_queue
+    global queue_lock, heart_beat_queue, rest_time
 
     queue_lock.acquire()
     temp = heart_beat_queue
@@ -140,7 +139,7 @@ def get_highest_averange_hbr_data():
     numbers = heapq.nlargest(5, temp)
     averange = numpy.mean(numbers)
 
-    print("Highest 5 HBR in last one minute is:", numbers, ", Averange is:", averange)
+    print("Highest 5 HBR in last %s seconds is:" % rest_time, numbers, ", Averange is:", averange)
 
     return averange
 
@@ -195,6 +194,7 @@ class MusicModule(threading.Thread):
             # Wait for command.
             command_event.wait()
             music = pygame.mixer.music
+
             # Get command and perform operation.
             current_state = events.get_value("Music_player_state")
             if current_state == "PAUSE":
@@ -204,7 +204,7 @@ class MusicModule(threading.Thread):
                 music.unpause()
 
             elif current_state == "CHANGE-PLAYING":
-                music.fadeout(800)
+                music.fadeout(1000)
 
             elif current_state == "CHANGE-PAUSE":
                 music.unpause()
@@ -213,7 +213,7 @@ class MusicModule(threading.Thread):
             elif current_state == "QUIT-PLAYING":
                 # Stop the player.
                 events.set_value("Music player running", False)
-                music.fadeout(800)
+                music.fadeout(1000)
 
             elif current_state == "QUIT-PAUSE":
                 events.set_value("Music player running", False)
@@ -229,6 +229,7 @@ def music_play():
     global outMessage
     pygame.mixer.init()
 
+    # Judge the music playing style
     if events.get_value("Warming_up"):
         music_location, music_name = musicDB.select_music(random.randint(90, 109))
         events.set_value("Music_location", str(music_location))
@@ -238,13 +239,11 @@ def music_play():
         events.set_value("Music_location", str(music_location))
         events.set_value("Music_name", str(music_name))
 
-    # events.to_string()
-
+    # Send the name of playing music
     outMessage["command"] = "Music name"
     outMessage["data"] = music_name
     send_event.set()
     print("\033[36mSEND MESSAGE:\033[0m", outMessage["command"], outMessage["data"])
-    send_event.set()
 
     pygame.mixer.music.load(music_location)
     pygame.mixer.music.play()
@@ -299,8 +298,10 @@ def change_light_color_by_hbr():
     while events.get_value("Lights_on"):
         time.sleep(1)
 
+        # Lock heart beat queue
         queue_lock.acquire()
         newest_heart_rate = heart_beat_queue[-1]
+        # Release heart beat queue
         queue_lock.release()
 
         # Lock color parameters
@@ -381,6 +382,7 @@ def server_receive(sock):
 
         # 1. If client send "Quit client", server will reply to help client quit
         if inMessage["command"] == "Quit client":
+            # Judge whether music is playing
             if events.get_value("Music_player_state") == "PAUSE":
                 events.set_value("Music_player_state", "QUIT-PAUSE")
             else:
@@ -409,9 +411,10 @@ def server_receive(sock):
                     client_secret = config_read('FITBIT ACCOUNT', 'fitbit_user_secret')
                     rest_heartbeat_rate = get_averange_hbt_from_server(client_id, client_secret, 7)
 
-                    # Error occurred during fetch data from cloud
+                    # Error occurred during fetch data from cloud, use the stored data
                     if not rest_heartbeat_rate:
                         rest_heartbeat_rate = eval(config_read('BODY INFO', 'rest_heartbeat_rate'))
+                # Use stored data
                 else:
                     rest_heartbeat_rate = eval(config_read('BODY INFO', 'rest_heartbeat_rate'))
 
@@ -548,7 +551,8 @@ def server_receive(sock):
                 events.set_value("Detect_on", True)
                 events.set_value("Lights_on", True)
 
-                for i in range(60):
+                # Fill the queue with random aerobic sport heart rate
+                for i in range(rest_time):
                     heart_beat_queue.append(random.randint(round(aerobic_start), round(anaerobic_start)))
 
                 thread_detect_hbr_data.start()
@@ -599,8 +603,8 @@ def server_receive(sock):
 
         # 13. Client asks server to begin heartbeat rate detection
         elif inMessage["command"] == "Start heartbeat detection":
-            # Filled the queue with random aerobic heart beat rate.
-            for i in range(60):
+            # Filled the queue with random aerobic sport heart beat rate.
+            for i in range(rest_time):
                 heart_beat_queue.append(random.randint(round(aerobic_start), round(anaerobic_start)))
 
             # Start detecting thread, server will send heartbeat data once per second
@@ -634,6 +638,7 @@ def server_receive(sock):
             config_write('SERVER', 'is_initialized', False)
 
             # Server replies rest successfully
+            outMessage.clear()
             outMessage["command"] = "Reset successfully"
             send_event.set()
 
@@ -645,6 +650,7 @@ def server_receive(sock):
             musicDB.scan_music(config_read('SERVER', 'music_directory'))
 
             # Server replies success
+            outMessage.clear()
             outMessage["command"] = "Update MDB successfully"
             send_event.set()
 

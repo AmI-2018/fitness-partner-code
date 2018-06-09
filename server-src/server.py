@@ -10,8 +10,8 @@ inMessage = {}
 send_event = threading.Event()
 run_lock = threading.Lock()
 
-hbr_running = True
-music_running = True
+hbr_running = False
+music_running = False
 
 
 def server_send(sock, address):
@@ -50,6 +50,8 @@ def server_receive(sock):
         # 1.客户端发送 "Quit client" 退出运行，服务器会发送 "Quit client" 帮助客户端退出运行
         if inMessage["command"] == "Quit client":
             outMessage["command"] = "Quit client"
+            hbr_running = False
+            music_running = False
             send_event.set()
             break
 
@@ -109,8 +111,8 @@ def server_receive(sock):
             global music_running
             music_running = True
 
-            thread_hbr_demo = threading.Thread(target=send_music_name_demo)
-            thread_hbr_demo.start()
+            send_musicname_demo = threading.Thread(target=send_music_name_demo)
+            send_musicname_demo.start()
 
             print("\033[36mEXECUTED COMMAND:\033[0m", inMessage["command"])
 
@@ -118,8 +120,13 @@ def server_receive(sock):
         elif inMessage["command"] == "Start sport music":
             music_running = True
 
-            thread_hbr_demo = threading.Thread(target=send_music_name_demo)
-            thread_hbr_demo.start()
+            if not hbr_running:
+                hbr_running = True
+                thread_hbrdemo = threading.Thread(target=heart_beat_demo)
+                thread_hbrdemo.start()
+
+            send_musicname_demo = threading.Thread(target=send_music_name_demo)
+            send_musicname_demo.start()
 
             print("\033[36mEXECUTED COMMAND:\033[0m", inMessage["command"])
 
