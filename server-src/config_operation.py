@@ -56,4 +56,3 @@ if __name__ == "__main__":
 
     # If the key don't have a value, the result will be '', not None
 
-    print(int(''))

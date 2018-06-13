@@ -14,14 +14,14 @@ import simplejson
 import configparser
 from config_operation import config_write, config_read, reset_config
 from get_restHBR_from_cloud import get_averange_hbt_from_server
-
+import select
 
 # INITIALIZE MODULE
 
 
 def initialize_server():
     global converter, lights_url, all_the_lights, \
-           host, port
+           host, port, pi_host, pi_port
     # Read configurations
     config = configparser.ConfigParser()
     config.read('config.ini')
@@ -44,6 +44,10 @@ def initialize_server():
     host = config['SERVER']['host']
     port = int(config['SERVER']['port'])
 
+    # Initialize raspberry IP and PORT
+    pi_host = config['SERVER']['pi_host']
+    pi_port = int(config['SERVER']['pi_port'])
+
 
 def initialize_sport_settings(rest_heartbeat_rate):
     global warm_up_time, rest_time, \
@@ -57,7 +61,7 @@ def initialize_sport_settings(rest_heartbeat_rate):
 
     # Initialize sport information
     warm_up_time = int(config['SPORT INFO']['warm_up_time'])
-    rest_time = int(config['SPORT INFO']['rest_time'])
+    rest_time = int(config['SPORT INFO']['rest_time']) + 10
 
     # Initialize light color terminal and range information
     default_color = eval(config['LIGHT COLOR']['default_color'])
@@ -89,28 +93,35 @@ def initialize_sport_settings(rest_heartbeat_rate):
 
 
 def detect_hbr_data():
-    global queue_lock, heart_beat_queue, demo_mode, rest_time
+    global queue_lock, heart_beat_queue, \
+           demo_mode, rest_time, aerobic_start, maximum_heart_beat, \
+           pi_host, pi_port
 
     # Judge whether start the module by demo mode
+
+    # Start with demo mode
     if demo_mode:
         print("\033[33mStart heart beat rate detection demo module!\033[0m")
-        heart_beat = 130
+        heart_beat = aerobic_start - 5
+        switch = True
+
         while events.get_value("Detect_on"):
             queue_lock.acquire()
+            # If queue is full pop the first element
             if len(heart_beat_queue) >= rest_time:
                 heart_beat_queue.pop(0)
 
-            if random.randint(0, 1):
-                heart_beat += random.randint(0, 10)
-            else:
-                heart_beat -= random.randint(0, 10)
-
-            if heart_beat < 70:
-                heart_beat_queue.append(heart_beat + random.randint(10, 20))
-            elif heart_beat > 200:
-                heart_beat_queue.append(heart_beat - random.randint(10, 20))
-            else:
+            if switch:
+                heart_beat += 5
                 heart_beat_queue.append(heart_beat)
+                if heart_beat > maximum_heart_beat:
+                    switch = False
+            else:
+                heart_beat -= 5
+                heart_beat_queue.append(heart_beat)
+                if heart_beat < aerobic_start:
+                    switch = True
+
             queue_lock.release()
 
             outMessage["command"] = "Heartbeat rate"
@@ -119,14 +130,103 @@ def detect_hbr_data():
             print("\033[36mSEND MESSAGE:\033[0m", outMessage["command"], outMessage["data"])
 
             time.sleep(1)
+
         print("\033[31mHeart beat rate detection demo module stopped!\033[0m")
 
     # Start with real module
-    # TODO: Implement heart beat sense module
     else:
         print("\033[33mStart heart beat rate detection module!\033[0m")
-        time.sleep(1)
+
+        # Initialize raspberry socket
+        pi_sock = socket.socket()
+        pi_sock.connect((pi_host, pi_port))
+
+        # Set socket unblocking mode and timeout
+        pi_sock.setblocking(0)
+        timeout = 1
+
+        # Send message get heartbeat sensor start working
+        pi_command = {"command": "Start detecting"}
+        pi_data = simplejson.dumps(pi_command).encode()
+        pi_sock.send(pi_data)
+
+        while True:
+            # If client is over, send message stop sensor detecting and break the loop
+            if not events.get_value("Detect_on"):
+                pi_command["command"] = "Quit client"
+                pi_data = simplejson.dumps(pi_command).encode()
+                pi_sock.send(pi_data)
+                break
+
+            # If queue is full pop the first element
+            queue_lock.acquire()
+            if len(heart_beat_queue) >= rest_time:
+                heart_beat_queue.pop(0)
+            queue_lock.release()
+
+            # Set select for receiving timeout
+            ready = select.select([pi_sock], [], [], timeout)
+            if ready[0]:
+                pi_get = simplejson.loads(pi_sock.recv(1024).decode())
+
+                # if pi_get["command"] == "Heartbeat rate":
+                heart_beat = round(pi_get["data"])
+
+                queue_lock.acquire()
+                heart_beat_queue.append(heart_beat)
+                queue_lock.release()
+
+                outMessage["command"] = "Heartbeat rate"
+                outMessage["data"] = heart_beat
+                send_event.set()
+                print("\033[36mSEND MESSAGE:\033[0m", outMessage["command"], outMessage["data"])
+
+            # If timeout get the newest heartbeat rate back to the aerobic_start number
+            else:
+                queue_lock.acquire()
+                if heart_beat_queue[-1] > aerobic_start:
+                    heart_beat_queue.append(heart_beat_queue[-1] - 10)
+                else:
+                    heart_beat_queue.append(aerobic_start)
+                queue_lock.release()
+
+        pi_sock.close()
         print("\033[31mHeart beat rate detection module stopped!\033[0m")
+
+
+def detect_rest_hbr():
+    global pi_host, pi_port
+    print("\033[33mStart rest heart beat rate detection module!\033[0m")
+
+    counter = 0
+
+    # Initialize raspberry socket
+    pi_sock = socket.socket()
+    pi_sock.connect((pi_host, pi_port))
+
+    # Send message get heartbeat sensor start working
+    pi_command = {"command": "Start detecting"}
+    pi_data = simplejson.dumps(pi_command).encode()
+    pi_sock.send(pi_data)
+
+    # Count up for 15 valid heartbeat rate data
+    while counter < 15:
+        pi_get = simplejson.loads(pi_sock.recv(1024).decode())
+        heart_beat = round(pi_get["data"])
+
+        outMessage["command"] = "Heartbeat rate"
+        outMessage["data"] = heart_beat
+        send_event.set()
+
+        counter += 1
+        print("\033[36mSEND MESSAGE:\033[0m", outMessage["command"], outMessage["data"])
+
+    # Close socket to raspberry
+    pi_command["command"] = "Quit client"
+    pi_data = simplejson.dumps(pi_command).encode()
+    pi_sock.send(pi_data)
+    pi_sock.close()
+    print("\033[31mHeart beat rate detection module stopped!\033[0m")
 
 
 def get_highest_averange_hbr_data():
@@ -390,7 +490,6 @@ def server_receive(sock):
             events.set_value("Detect_on", False)
             events.set_value("Lights_on", False)
             command_event.set()
-
             outMessage["command"] = "Quit client"
             send_event.set()
             break
@@ -489,6 +588,7 @@ def server_receive(sock):
             config_write('SPORT INFO', 'warm_up_time', warm_up_time)
             rest_time = initialize_data['rest_time']
             config_write('SPORT INFO', 'rest_time', rest_time)
+            rest_time += 10
 
             # Initialize and save light color
             default_color = initialize_data['default_color']
@@ -519,15 +619,9 @@ def server_receive(sock):
 
         # 4. Client asks rest heartbeat data
         elif inMessage["command"] == "Get rest heartbeat rate":
-
             # Server will send 15 valid heart beat data
-            # TODO: Implement heart beat sense module
-            for i in range(0, 15):
-                outMessage["command"] = "Heartbeat rate"
-                outMessage["data"] = random.randint(70, 80)
-                send_event.set()
-                print("\033[36mSEND MESSAGE:\033[0m", outMessage["command"], outMessage["data"])
-                time.sleep(0.1)
+            thread_detect_hbr_data = threading.Thread(target=detect_rest_hbr)
+            thread_detect_hbr_data.start()
 
         # 5. Client asks server to start warm up music
         elif inMessage["command"] == "Start warm up music":

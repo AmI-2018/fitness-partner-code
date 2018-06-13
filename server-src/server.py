@@ -66,9 +66,9 @@ def server_receive(sock):
 
                 # 必要的启动数据，保存在字典 outMessage["data"] 中
                 outMessage["data"] = {"warm_up_time": 15,
-                                      "default_color": (255, 255, 255),
-                                      "anaerobic_color": (153, 204, 51),
-                                      "maximum_color": (255, 68, 0)
+                                      "default_color": [255, 255, 255],
+                                      "anaerobic_color": [153, 204, 51],
+                                      "maximum_color": [255, 68, 0]
                                       }
 
             # 如果没有初始化过会发送给客户端 "Server isn't initialized"
@@ -108,7 +108,6 @@ def server_receive(sock):
 
         # 5.客户端向服务器请求开始热身音乐
         elif inMessage["command"] == "Start warm up music":
-            global music_running
             music_running = True
 
             send_musicname_demo = threading.Thread(target=send_music_name_demo)
@@ -173,7 +172,7 @@ def server_receive(sock):
 
         # 13.客户端向服务器请求打开心率检测
         elif inMessage["command"] == "Start heartbeat detection":
-
+            hbr_running = True
             # 启动心率检测demo线程，每一秒会向服务端发送一个心率数据
             thread_hbr_demo = threading.Thread(target=heart_beat_demo)
             thread_hbr_demo.start()
@@ -231,24 +230,26 @@ def heart_beat_demo():
         for i in range(random.randint(0, 5), random.randint(5, 10)):
             if not hbr_running:
                 break
+
+            time.sleep(1)
             outMessage["command"] = "Heartbeat rate"
             outMessage["data"] = random.randint(120, 160)
             send_event.set()
             print("\033[36mSEND MESSAGE:\033[0m", outMessage["command"], outMessage["data"])
 
-            time.sleep(1)
+
 
         for i in range(random.randint(0, 5), random.randint(5, 10)):
 
             if not hbr_running:
                 break
 
+            time.sleep(1)
             outMessage["command"] = "Heartbeat rate"
             outMessage["data"] = random.randint(160, 190)
             send_event.set()
             print("\033[36mSEND MESSAGE:\033[0m", outMessage["command"], outMessage["data"])
 
-            time.sleep(1)
 
 
 def send_music_name_demo():
@@ -282,6 +283,9 @@ if __name__ == "__main__":
 
     while True:
         conn, addr = s.accept()
+        send_event.clear()
+        inMessage.clear()
+        outMessage.clear()
         print("\033[34mConnect with: \033[0m" + addr[0] + ":" + str(addr[1]))
 
         thread_send = threading.Thread(target=server_send, args=(conn, addr))

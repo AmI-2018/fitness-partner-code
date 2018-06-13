@@ -53,9 +53,9 @@ def client_send(sock):
                                   # "fitbit_user_id": "22CTVH",
                                   "fitbit_user_id": '',
                                   "fitbit_user_secret": '',
-                                  "default_color": (255, 255, 255),
-                                  "anaerobic_color": (153, 204, 51),
-                                  "maximum_color": (255, 68, 0)
+                                  "default_color": [255, 255, 255],
+                                  "anaerobic_color": [153, 204, 51],
+                                  "maximum_color": [255, 68, 0]
                                   }
         elif command == "12":
             outMessage["command"] = "isInitialized"
@@ -75,9 +75,9 @@ def client_send(sock):
         elif command == "17":
             outMessage["command"] = "Update light color"
 
-            outMessage["data"] = {"default_color": (255, 255, 0),
-                                  "anaerobic_color": (153, 204, 0),
-                                  "maximum_color": (255, 0, 0)
+            outMessage["data"] = {"default_color": [255, 255, 0],
+                                  "anaerobic_color": [153, 204, 0],
+                                  "maximum_color": [255, 0, 0]
                                   }
 
         elif command == "quit":
@@ -125,4 +125,3 @@ if __name__ == "__main__":
 
     thread_send.start()
     thread_receive.start()
-
