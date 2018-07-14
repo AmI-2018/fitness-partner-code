@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="155dp"
+            android:layout_height="wrap_content"
+            android:text="Aerobic Start: " />
+
+        <TextView
+            android:id="@+id/color1"
+            android:layout_width="40dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="10dp"
+            android:background="@android:color/holo_red_dark" />
+
+        <TextView
+            android:id="@+id/color2"
+            android:layout_width="40dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="20dp"
+            android:background="@android:color/holo_blue_bright" />
+
+        <TextView
+            android:id="@+id/user_color1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:padding="10dp"
+            android:text="customize"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="153dp"
+            android:layout_height="wrap_content"
+            android:text="Anaerobic Start" />
+
+        <TextView
+            android:id="@+id/color3"
+            android:layout_width="40dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="10dp"
+            android:background="@android:color/holo_red_dark" />
+
+        <TextView
+            android:id="@+id/color4"
+            android:layout_width="40dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="20dp"
+            android:background="@android:color/holo_blue_bright" />
+
+        <TextView
+            android:id="@+id/user_color2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:padding="10dp"
+            android:text="customize"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Maximum Heart Rate： " />
+
+        <TextView
+            android:id="@+id/color5"
+            android:layout_width="40dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="10dp"
+            android:background="@android:color/holo_red_dark" />
+
+        <TextView
+            android:id="@+id/color6"
+            android:layout_width="40dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="20dp"
+            android:background="@android:color/holo_blue_bright" />
+
+        <TextView
+            android:id="@+id/user_color3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:padding="10dp"
+            android:text="customize"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/stop"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/settings_btn_bg"
+        android:gravity="center"
+        android:padding="10dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:text="Apply" />
+</LinearLayout>

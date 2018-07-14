@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:text="Set warm up time:" />
+
+        <EditText
+            android:id="@+id/wake_up_time"
+            android:layout_marginLeft="15dp"
+            android:text="15"
+            android:inputType="number"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:text="Set rest time between each group of anaerobic exercise:" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/time1"
+            android:layout_width="40dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/settings_btn_bg"
+            android:gravity="center"
+            android:text="30s"
+            android:textColor="@android:color/white" />
+
+        <TextView
+            android:id="@+id/time2"
+            android:layout_width="40dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/settings_btn_bg"
+            android:gravity="center"
+            android:text="45s"
+            android:textColor="@android:color/white" />
+
+        <TextView
+            android:id="@+id/time3"
+            android:layout_width="40dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/settings_btn_bg"
+            android:gravity="center"
+            android:text="60s"
+            android:textColor="@android:color/white" />
+
+        <TextView
+            android:id="@+id/user_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:padding="10dp"
+            android:text="customize"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+            android:text="Set lights' color for different stage of doing sport" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Aerobic Start:            " />
+
+        <TextView
+            android:id="@+id/color1"
+            android:layout_width="40dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="10dp"
+            android:background="@android:color/holo_red_dark" />
+
+        <TextView
+            android:id="@+id/color2"
+            android:layout_width="40dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="20dp"
+            android:background="@android:color/holo_blue_bright" />
+
+        <TextView
+            android:id="@+id/user_color1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:padding="10dp"
+            android:text="customize"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Anaerobic Start:        " />
+
+        <TextView
+            android:id="@+id/color3"
+            android:layout_width="40dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="10dp"
+            android:background="@android:color/holo_red_dark" />
+
+        <TextView
+            android:id="@+id/color4"
+            android:layout_width="40dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="20dp"
+            android:background="@android:color/holo_blue_bright" />
+
+        <TextView
+            android:id="@+id/user_color2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:padding="10dp"
+            android:text="customize"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Maximum Heart Rate:" />
+
+        <TextView
+            android:id="@+id/color5"
+            android:layout_width="40dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="10dp"
+            android:background="@android:color/holo_red_dark" />
+
+        <TextView
+            android:id="@+id/color6"
+            android:layout_width="40dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="20dp"
+            android:background="@android:color/holo_blue_bright" />
+
+        <TextView
+            android:id="@+id/user_color3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:padding="10dp"
+            android:text="customize"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:text="Fitbit ID:" />
+
+        <EditText
+            android:id="@+id/name"
+            android:layout_marginLeft="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:text="Fitbit Secret:" />
+
+        <EditText
+            android:id="@+id/secret"
+            android:layout_marginLeft="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/stop"
+        android:layout_width="100dp"
+        android:layout_marginBottom="20dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/settings_btn_bg"
+        android:gravity="center"
+        android:padding="10dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:text="Apply" />
+    </LinearLayout>
+</ScrollView>
