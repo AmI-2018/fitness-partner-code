@@ -30,7 +30,7 @@ public class WelcomeActivity extends BaseActivity {
         public void socketConnectFailed() {
             dialog.dismiss();
             Toast.makeText(WelcomeActivity.this, "connect failed ", Toast.LENGTH_SHORT).show();
-            AlertDialog alertDialog = new AlertDialog.Builder(WelcomeActivity.this).setMessage("连接失败").setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            AlertDialog alertDialog = new AlertDialog.Builder(WelcomeActivity.this).setMessage("Connection failed!").setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     Intent intent = new Intent(WelcomeActivity.this, MainActivity.class);

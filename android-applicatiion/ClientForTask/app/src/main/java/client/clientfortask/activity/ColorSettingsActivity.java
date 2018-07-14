@@ -27,12 +27,12 @@ import client.clientfortask.obj.MusicSocketObj;
 import client.clientfortask.observer.SocketEventObserver;
 
 public class ColorSettingsActivity extends BaseActivity implements View.OnClickListener {
-    private int[] color1 = new int[]{255, 180, 20};
-    private int[] color2 = new int[]{100, 180, 20};
-    private int[] color3 = new int[]{2, 180, 20};
-    private int[] color4 = new int[]{4, 4, 20};
-    private int[] color5 = new int[]{255, 180, 0};
-    private int[] color6 = new int[]{99, 180, 20};
+    private int[] color1 = new int[]{255, 255, 255};
+    private int[] color2 = new int[]{0, 191, 255};
+    private int[] color3 = new int[]{153, 204, 51};
+    private int[] color4 = new int[]{143, 188, 143};
+    private int[] color5 = new int[]{255, 68, 0};
+    private int[] color6 = new int[]{210, 105, 30};
 
     private TextView colortext1;
     private TextView colortext2;
@@ -41,9 +41,9 @@ public class ColorSettingsActivity extends BaseActivity implements View.OnClickL
     private TextView colortext5;
     private TextView colortext6;
 
-    private int[] currentcolor1 = new int[]{255, 180, 20};
-    private int[] currentcolor2 = new int[]{2, 180, 20};
-    private int[] currentcolor3 = new int[]{255, 180, 0};
+    private int[] currentcolor1 = new int[]{255, 255, 255};
+    private int[] currentcolor2 = new int[]{153, 204, 51};
+    private int[] currentcolor3 = new int[]{255, 68, 0};
 
     private TextView usercolor1;
     private TextView usercolor2;

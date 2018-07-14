@@ -10,15 +10,15 @@ import android.widget.Toast;
 import org.greenrobot.eventbus.EventBus;
 
 import client.clientfortask.R;
-import client.clientfortask.obj.WakeUpTimeObj;
+import client.clientfortask.obj.WarmUpTimeObj;
 
-public class WakeUpTimeSettingActivity extends BaseActivity implements View.OnClickListener {
+public class WarmUpTimeSettingActivity extends BaseActivity implements View.OnClickListener {
     private EditText time;
     private View ok;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_wake_up);
+        setContentView(R.layout.activity_warm_up);
         time = findViewById(R.id.age);
         ok = findViewById(R.id.ok);
         ok.setOnClickListener(this);
@@ -27,10 +27,10 @@ public class WakeUpTimeSettingActivity extends BaseActivity implements View.OnCl
     @Override
     public void onClick(View v) {
         if (TextUtils.isEmpty(time.getText().toString())){
-            Toast.makeText(this, "请输入时间", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please enter the time!", Toast.LENGTH_SHORT).show();
             return;
         }
-        WakeUpTimeObj obj = new WakeUpTimeObj();
+        WarmUpTimeObj obj = new WarmUpTimeObj();
         obj.time = Integer.parseInt(time.getText().toString());
         obj.type = 0;
         EventBus.getDefault().post(obj);

@@ -101,7 +101,7 @@ protected void onCreate(Bundle savedInstanceState){
 //            ip.setText("");
         //this is test data
         port.setText("8888");
-        ip.setText("192.168.0.106");
+        ip.setText("192.168.1.100");
         }
         }
 
@@ -114,7 +114,7 @@ protected void onDestroy(){
 @Override
 public void onClick(View v){
         if(TextUtils.isEmpty(ip.getText().toString())||TextUtils.isEmpty(port.getText().toString())){
-        Toast.makeText(this,"请补充完整信息",Toast.LENGTH_SHORT).show();
+        Toast.makeText(this,"Please fill the information!",Toast.LENGTH_SHORT).show();
         return;
         }
         dialog.show();

@@ -59,11 +59,11 @@ public class RGBColorActivity extends BaseActivity implements SeekBar.OnSeekBarC
 
     private void setImageColor() {
         int redColor = red.getProgress();
-        int blueColor = blue.getProgress();
         int greenColor = green.getProgress();
+        int blueColor = blue.getProgress();
         String s1 = String.format("%02x", redColor);
-        String s2 = String.format("%02x", blueColor);
-        String s3 = String.format("%02x", greenColor);
+        String s2 = String.format("%02x", greenColor);
+        String s3 = String.format("%02x", blueColor);
         Log.e("yinjinbiao", "s1 is " + s1 + " s2 is " + s2 + " s3 is " + s3);
         color.setImageDrawable(new ColorDrawable(Color.parseColor("#" + s1 + s2 + s3)));
     }

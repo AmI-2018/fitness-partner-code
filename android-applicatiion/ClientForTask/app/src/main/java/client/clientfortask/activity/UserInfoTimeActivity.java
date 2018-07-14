@@ -1,15 +1,12 @@
 package client.clientfortask.activity;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -22,31 +19,28 @@ import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import client.clientfortask.R;
 import client.clientfortask.listener.SimpleSocketEventListener;
 import client.clientfortask.manager.ClientManager;
 import client.clientfortask.obj.ColorUpdateObj;
-import client.clientfortask.obj.LightCommandObj;
 import client.clientfortask.obj.Mode;
-import client.clientfortask.obj.MusicSocketObj;
 import client.clientfortask.obj.ServerInitCommandObj;
 import client.clientfortask.obj.ServerInitObj;
 import client.clientfortask.obj.ServerInitSuccessObj;
-import client.clientfortask.obj.WakeUpTimeObj;
+import client.clientfortask.obj.WarmUpTimeObj;
 import client.clientfortask.observer.SocketEventObserver;
 import client.clientfortask.utils.SharePreferenceUtils;
 
 public class UserInfoTimeActivity extends BaseActivity implements View.OnClickListener {
 
-    private int[] color1 = new int[]{255, 180, 20};
-    private int[] color2 = new int[]{100, 180, 20};
-    private int[] color3 = new int[]{2, 180, 20};
-    private int[] color4 = new int[]{4, 4, 20};
-    private int[] color5 = new int[]{255, 180, 0};
-    private int[] color6 = new int[]{99, 180, 20};
+    private int[] color1 = new int[]{255, 255, 255};
+    private int[] color2 = new int[]{0, 191, 255};
+    private int[] color3 = new int[]{153, 204, 51};
+    private int[] color4 = new int[]{143, 188, 143};
+    private int[] color5 = new int[]{255, 68, 0};
+    private int[] color6 = new int[]{210, 105, 30};
 
     private TextView colortext1;
     private TextView colortext2;
@@ -55,9 +49,9 @@ public class UserInfoTimeActivity extends BaseActivity implements View.OnClickLi
     private TextView colortext5;
     private TextView colortext6;
 
-    private int[] currentcolor1 = new int[]{255, 180, 20};
-    private int[] currentcolor2 = new int[]{2, 180, 20};
-    private int[] currentcolor3 = new int[]{255, 180, 0};
+    private int[] currentcolor1 = new int[]{255, 255, 255};
+    private int[] currentcolor2 = new int[]{153, 204, 51};
+    private int[] currentcolor3 = new int[]{255, 68, 0};
     private int currentTime = 30;
     private int wake_time = 15;
     private String user_name="";
@@ -218,7 +212,7 @@ public class UserInfoTimeActivity extends BaseActivity implements View.OnClickLi
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(WakeUpTimeObj obj) {
+    public void onEvent(WarmUpTimeObj obj) {
             currentTime = obj.time;
     }
 
@@ -289,9 +283,9 @@ public class UserInfoTimeActivity extends BaseActivity implements View.OnClickLi
         List<Integer> list2 = new ArrayList<>();
         List<Integer> list3 = new ArrayList<>();
         for (int index =0;index<3;index++){
-            list1.add(color1[index]);
-            list2.add(color2[index]);
-            list3.add(color3[index]);
+            list1.add(currentcolor1[index]);
+            list2.add(currentcolor2[index]);
+            list3.add(currentcolor3[index]);
         }
         dataBean.setDefault_color(list1);
         dataBean.setAnaerobic_color(list2);

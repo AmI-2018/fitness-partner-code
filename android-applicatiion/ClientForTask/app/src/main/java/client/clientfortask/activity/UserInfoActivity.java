@@ -40,7 +40,7 @@ public class UserInfoActivity extends BaseActivity implements View.OnClickListen
     @Override
     public void onClick(View v) {
         if (TextUtils.isEmpty(age.getText().toString())) {
-            Toast.makeText(getApplicationContext(), "请输入年龄", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Please enter your age!", Toast.LENGTH_SHORT).show();
             return;
         }
         Mode.getInstance().setAge(Integer.parseInt(age.getText().toString()));

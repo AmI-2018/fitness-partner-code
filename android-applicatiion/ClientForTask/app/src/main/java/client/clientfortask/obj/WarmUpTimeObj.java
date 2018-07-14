@@ -1,6 +1,6 @@
 package client.clientfortask.obj;
 
-public class WakeUpTimeObj {
+public class WarmUpTimeObj {
     public  int time;
     public int type;
 }
