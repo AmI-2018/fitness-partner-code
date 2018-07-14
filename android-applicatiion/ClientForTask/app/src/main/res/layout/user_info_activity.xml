@@ -9,9 +9,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_margin="40dp"
-        android:text="请输入你的年龄"
+        android:text="Enter your age:"
         android:textColor="@android:color/black"
-        android:textSize="14sp" />
+        android:textSize="24sp" />
 
     <EditText
         android:id="@+id/age"

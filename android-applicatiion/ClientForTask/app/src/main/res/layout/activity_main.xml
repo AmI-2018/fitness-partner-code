@@ -14,7 +14,7 @@
         android:gravity="center"
         android:textSize="14sp"
         android:textColor="@android:color/holo_red_dark"
-        android:text="请输入ip和port信息"
+        android:text="Enter server IP address and Port information:"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
@@ -27,7 +27,7 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="43dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:text="IP："
@@ -72,7 +72,7 @@
         android:id="@+id/connect"
         android:textColor="@android:color/black"
         android:textSize="13sp"
-        android:text="连接"
+        android:text="Connect"
         android:layout_margin="30dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

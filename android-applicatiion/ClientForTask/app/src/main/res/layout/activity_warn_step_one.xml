@@ -28,16 +28,16 @@
         android:orientation="vertical">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="215dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="30dp"
+            android:layout_marginLeft="0dp"
             android:gravity="center"
             android:padding="10dp"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
             android:text="Ready to do warm up sport"
             android:textColor="@android:color/black"
-            android:textSize="14sp" />
+            android:textSize="24sp" />
 
         <LinearLayout
             android:layout_width="wrap_content"

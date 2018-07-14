@@ -9,9 +9,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_margin="40dp"
-        android:text="心率数据"
+        android:text="Set Rest Heartbeat Rate:"
         android:textColor="@android:color/black"
-        android:textSize="14sp" />
+        android:textSize="24sp" />
 
     <LinearLayout
         android:orientation="horizontal"
@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_margin="40dp"
-            android:text="从服务器获取:"
+            android:text="Get data from server:"
             android:textColor="@android:color/black"
             android:textSize="14sp" />
 
@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_margin="40dp"
-            android:text="开始获取"
+            android:text="START"
             android:textColor="@android:color/black"
             android:textSize="14sp" />
     </LinearLayout>

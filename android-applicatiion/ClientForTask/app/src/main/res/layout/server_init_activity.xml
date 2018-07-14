@@ -20,10 +20,11 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="Wake up time left"
+        android:layout_gravity="left"
+        android:layout_marginLeft="20dp"
+        android:text="Warm up time left:"
         android:textColor="@android:color/black"
-        android:textSize="14sp" />
+        android:textSize="18sp" />
 
     <TextView
         android:id="@+id/wake_up_time"
@@ -38,11 +39,12 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
+        android:layout_gravity="left"
+        android:layout_marginLeft="20dp"
         android:layout_marginTop="20dp"
-        android:text="Music name"
+        android:text="Music name:"
         android:textColor="@android:color/black"
-        android:textSize="14sp" />
+        android:textSize="18sp" />
 
     <TextView
         android:id="@+id/music_name"
@@ -89,10 +91,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="40dp"
         android:text="Ready to do sport"
         android:textColor="@android:color/black"
-        android:textSize="14sp" />
+        android:textSize="24sp" />
 
     <TextView
         android:id="@+id/start"

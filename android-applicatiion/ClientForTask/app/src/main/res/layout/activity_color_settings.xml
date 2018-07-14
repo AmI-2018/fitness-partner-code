@@ -11,9 +11,9 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="155dp"
             android:layout_height="wrap_content"
-            android:text="有氧开始：" />
+            android:text="Aerobic Start: " />
 
         <TextView
             android:id="@+id/color1"
@@ -35,7 +35,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:padding="10dp"
-            android:text="自定义"
+            android:text="customize"
             android:textSize="12sp" />
     </LinearLayout>
 
@@ -46,9 +46,9 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="153dp"
             android:layout_height="wrap_content"
-            android:text="无氧开始：" />
+            android:text="Anaerobic Start" />
 
         <TextView
             android:id="@+id/color3"
@@ -70,7 +70,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:padding="10dp"
-            android:text="自定义"
+            android:text="customize"
             android:textSize="12sp" />
     </LinearLayout>
 
@@ -83,7 +83,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="最大心率：" />
+            android:text="Maximum Heart Rate： " />
 
         <TextView
             android:id="@+id/color5"
@@ -105,7 +105,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:padding="10dp"
-            android:text="自定义"
+            android:text="customize"
             android:textSize="12sp" />
     </LinearLayout>
 

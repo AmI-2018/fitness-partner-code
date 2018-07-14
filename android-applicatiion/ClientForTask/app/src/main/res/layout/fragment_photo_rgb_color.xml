@@ -55,8 +55,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Green"
             android:layout_gravity="center_vertical"
+            android:text="Green"
             android:textColor="#333333"
             android:textSize="16sp" />
 
@@ -86,8 +86,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Blue   "
             android:layout_gravity="center_vertical"
+            android:text="Blue   "
             android:textColor="#333333"
             android:textSize="16sp" />
 

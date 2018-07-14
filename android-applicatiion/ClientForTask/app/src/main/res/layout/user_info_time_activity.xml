@@ -18,7 +18,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
-            android:text="热身时间" />
+            android:text="Set warm up time:" />
 
         <EditText
             android:id="@+id/wake_up_time"
@@ -33,7 +33,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
-        android:text="有氧时间" />
+        android:text="Set rest time between each group of anaerobic exercise:" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -48,7 +48,7 @@
             android:layout_marginLeft="10dp"
             android:background="@drawable/settings_btn_bg"
             android:gravity="center"
-            android:text="30"
+            android:text="30s"
             android:textColor="@android:color/white" />
 
         <TextView
@@ -58,17 +58,17 @@
             android:layout_marginLeft="10dp"
             android:background="@drawable/settings_btn_bg"
             android:gravity="center"
-            android:text="45"
+            android:text="45s"
             android:textColor="@android:color/white" />
 
         <TextView
             android:id="@+id/time3"
             android:layout_width="40dp"
             android:layout_height="20dp"
-            android:layout_marginLeft="20dp"
+            android:layout_marginLeft="10dp"
             android:background="@drawable/settings_btn_bg"
             android:gravity="center"
-            android:text="60"
+            android:text="60s"
             android:textColor="@android:color/white" />
 
         <TextView
@@ -77,9 +77,15 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:padding="10dp"
-            android:text="自定义"
+            android:text="customize"
             android:textSize="12sp" />
     </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+            android:text="Set lights' color for different stage of doing sport" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -90,7 +96,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="有氧开始：" />
+            android:text="Aerobic Start:            " />
 
         <TextView
             android:id="@+id/color1"
@@ -112,7 +118,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:padding="10dp"
-            android:text="自定义"
+            android:text="customize"
             android:textSize="12sp" />
     </LinearLayout>
 
@@ -125,7 +131,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="无氧开始：" />
+            android:text="Anaerobic Start:        " />
 
         <TextView
             android:id="@+id/color3"
@@ -147,7 +153,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:padding="10dp"
-            android:text="自定义"
+            android:text="customize"
             android:textSize="12sp" />
     </LinearLayout>
 
@@ -160,7 +166,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="最大心率：" />
+            android:text="Maximum Heart Rate:" />
 
         <TextView
             android:id="@+id/color5"
@@ -182,7 +188,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:padding="10dp"
-            android:text="自定义"
+            android:text="customize"
             android:textSize="12sp" />
     </LinearLayout>
 
@@ -191,11 +197,12 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="horizontal">
+
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
-            android:text="用户名" />
+            android:text="Fitbit ID:" />
 
         <EditText
             android:id="@+id/name"
@@ -213,7 +220,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
-            android:text="密码" />
+            android:text="Fitbit Secret:" />
 
         <EditText
             android:id="@+id/secret"
